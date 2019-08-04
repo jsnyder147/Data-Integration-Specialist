@@ -38,7 +38,14 @@
     </types>
     <types>
         <members>Opportunity</members>
+        <members>Project__c</members>
+        <members>ServiceCredentials__c</members>
+        <members>ServiceTokens__c</members>
         <name>CustomObject</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>ConnectedApp</name>
     </types>
 
     <version>46.0</version>
