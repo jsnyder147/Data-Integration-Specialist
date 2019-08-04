@@ -8,7 +8,12 @@ public class ProjectCalloutService {
         generator.writeStartObject();
             generator.writeStringField('opportunityId', opportunity.Id);
             generator.writeStringField('opportunityName', opportunity.Name);
-            generator.writeStringField('accountName', opportunity.Account.Name);
+            if(opportunity.Account.Name != null) {
+                generator.writeStringField('accountName', opportunity.Account.Name);
+            }
+            else {
+                 generator.writeNullField('accountName');
+            }
             generator.writeDateField('closeDate',opportunity.CloseDate);
             generator.writeNumberField('amoun', opportunity.Amount);
         generator.writeEndObject();
@@ -19,22 +24,24 @@ public class ProjectCalloutService {
     
     // Future method to make apex callout
     @Future(callout=true)
-    private static void postToPMS(String serviceToken, String jsonInput, Id oppoId) {
-        HTTPRequest req = new HTTPRequest();
-        req.setEndPoint('callout:ProjectService');
-        req.setMethod('POST');
-        req.setHeader('token',serviceToken);
-        req.setHeader('Content-Type', 'application/json;charset=UTF-8');        
-        req.setBody(jsonInput);
+    private static void postToPMS(String serviceToken, String jsonInput, Id oppId) {
+        HTTPRequest request = new HTTPRequest();
+        request.setEndPoint('callout:ProjectService');
+        request.setMethod('POST');
+        request.setHeader('token',serviceToken);
+        request.setHeader('Content-Type', 'application/json;charset=UTF-8');        
+        request.setBody(jsonInput);
         HTTP http = new HTTP();
-        HTTPResponse res = http.send(req);
-        Opportunity opp = new Opportunity(Id=oppoId);
-        if(res.getStatusCode() != 201){
+        HTTPResponse response = http.send(request);
+        Opportunity opp = new Opportunity(Id=oppId);
+        if(response.getStatusCode() != 201){
             opp.StageName = 'Resubmit Project';
-            System.debug('Failure: ' + res.getStatusCode() + ' ' + res.getStatus());
+            System.debug('Failure: ' + response.getStatusCode() + ' ' + response.getStatus());
         } else {
-            opp.StageName = 'Submitted Project';                
-            System.debug('Success: ' + res.getStatus());
+            opp.StageName = 'Submitted Project';    
+            system.debug('response: ' + response);
+            //ProjectRESTService.postProjectData(response, oppId);           
+            System.debug('Success: ' + response.getStatus());
         }
         update opp;
     }
@@ -44,10 +51,10 @@ public class ProjectCalloutService {
         private String serviceToken;
         private String jsonInput;
         private String Id;
-        public QueueablePMSCall(String serviceToken, String jsonInput, Id oppoId){
+        public QueueablePMSCall(String serviceToken, String jsonInput, Id oppId){
             this.serviceToken = serviceToken;
             this.jsonInput = jsonInput;
-            this.Id = oppoId;
+            this.Id = oppId;
         }
         public void execute(QueueableContext context) {
             postToPMS(serviceToken, jsonInput, Id);
