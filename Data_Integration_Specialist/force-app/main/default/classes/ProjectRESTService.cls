@@ -20,7 +20,7 @@ global class ProjectRESTService {
             upsert project;
 
             updateOpp(OpportunityId);
-            
+
             return 'OK';
         }
         catch(Exception ex) {

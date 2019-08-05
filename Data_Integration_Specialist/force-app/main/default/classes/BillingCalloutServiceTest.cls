@@ -1,4 +1,11 @@
 @isTest
 private class BillingCalloutServiceTest {
-  //Implement mock callout tests here
+  @TestSetup
+  static void makeData(){
+    
+  }
+  @isTest 
+  static void testSucessfulCall() {
+    
+  }
 }

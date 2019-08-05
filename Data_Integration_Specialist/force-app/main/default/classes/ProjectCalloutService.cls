@@ -39,8 +39,7 @@ public class ProjectCalloutService {
             System.debug('Failure: ' + response.getStatusCode() + ' ' + response.getStatus());
         } else {
             opp.StageName = 'Submitted Project';    
-            system.debug('response: ' + response);
-            //ProjectRESTService.postProjectData(response, oppId);           
+            system.debug('response: ' + response);        
             System.debug('Success: ' + response.getStatus());
         }
         update opp;
