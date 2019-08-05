@@ -16,5 +16,13 @@ public class BillingCalloutService {
         project.password = ServiceCredentials__c.getValues('BillingServiceCredential').Password__c;
         BillingServiceProxy.InvoicesPortSoap11 invoiceCall = new BillingServiceProxy.InvoicesPortSoap11();
         String response = invoiceCall.billProject(project);
+        if(response != null && response.equalsIgnoreCase('OK')) {
+            Project__c project2 = [SELECT Id FROM Project__c WHERE ProjectRef__c =: ProjectRef];
+            project2.Status__c = 'Billed';
+            update project2;
+        }
+        else {
+            system.debug('Did not work');
+        }
     }
 }
